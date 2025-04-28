@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import StockQueryForm from './components/StockQuery/StockQueryForm';
+import StockMetrics from './components/StockQuery/StockMetrics';
+import { fetchStockData } from './services/alphaVantage';
+import { StockData } from './types/stock';
 
 function App() {
+  const [stockData, setStockData] = useState<StockData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleStockQuery = async (symbol: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchStockData(symbol);
+      setStockData(data);
+    } catch (err) {
+      setError('Failed to fetch stock data. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>Stock Analyzer</h1>
       </header>
+      <main className="App-main">
+        <StockQueryForm onSubmit={handleStockQuery} isLoading={isLoading} />
+        <StockMetrics data={stockData} isLoading={isLoading} error={error} />
+      </main>
     </div>
   );
 }
