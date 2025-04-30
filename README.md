@@ -41,12 +41,7 @@ cd Stock-Analysis-App
 npm install
 ```
 
-3. Create a `.env` file in the root directory and add your Alpha Vantage API key:
-```
-REACT_APP_ALPHA_VANTAGE_API_KEY=your_api_key_here
-```
-
-4. Start the development server:
+3. Start the development server:
 ```bash
 npm start
 ```
