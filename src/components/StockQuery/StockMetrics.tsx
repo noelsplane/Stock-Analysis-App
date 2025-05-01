@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { StockMetricsProps, StockData } from '../../types/favorites';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 import { GrowthMetrics } from '../../types/financial';
+import { FavoritesService } from '../../services/FavoritesService';
 
 interface NetIncomeItem {
   year: number;
