@@ -1,4 +1,13 @@
-import { Stock } from '../types/stock';
+interface Stock {
+  ticker: string;
+  name: string;
+  industry: string;
+  sector: string;
+  price: number;
+  marketCap: number;
+  volume: number;
+  lastUpdated: string;
+}
 
 const FAVORITES_KEY = 'stockAnalyzer_favorites';
 
@@ -26,4 +35,4 @@ export const FavoritesService = {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
   }
-};
+}; 
