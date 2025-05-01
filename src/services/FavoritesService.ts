@@ -1,13 +1,4 @@
-type Stock = {
-  ticker: string;
-  name: string;
-  industry: string;
-  sector: string;
-  price: number;
-  marketCap: number;
-  volume: number;
-  lastUpdated: string;
-};
+import { Stock } from '../types/stock';
 
 const FAVORITES_KEY = 'stockAnalyzer_favorites';
 
