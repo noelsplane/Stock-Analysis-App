@@ -3,7 +3,7 @@ import './App.css';
 import StockQueryForm from './components/StockQuery/StockQueryForm';
 import StockMetrics from './components/StockQuery/StockMetrics';
 import { fetchStockData } from './services/alphaVantage';
-import { StockData } from './types/stock';
+import { StockData } from './types/favorites';
 
 function App() {
   const [stockData, setStockData] = useState<StockData | null>(null);
@@ -37,3 +37,4 @@ function App() {
 }
 
 export default App;
+
