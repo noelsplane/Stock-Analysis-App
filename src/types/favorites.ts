@@ -7,4 +7,31 @@ export interface Stock {
   marketCap: number;
   volume: number;
   lastUpdated: string;
-} 
+}
+
+export interface StockData extends Stock {
+  symbol: string;
+  high52Week: number;
+  low52Week: number;
+  netIncome: Array<{
+    year: number;
+    value: number;
+  }>;
+  growthMetrics?: {
+    growthRate: number;
+    peRatio: number;
+    growthToPeRatio: number;
+    isGrowthHigherThanPe: boolean;
+  };
+}
+
+export interface StockMetricsProps {
+  data: StockData | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface StockQueryFormProps {
+  onSubmit: (ticker: string) => void;
+  isLoading: boolean;
+}
