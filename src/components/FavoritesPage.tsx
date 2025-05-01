@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { FavoritesService } from '../services/FavoritesService';
+import { Stock } from '../types/favorites';
 import './FavoritesPage.css';
 
-const FavoritesPage = () => {
-  const [favorites, setFavorites] = useState([]);
-  const [selectedIndustry, setSelectedIndustry] = useState('all');
+const FavoritesPage: React.FC = () => {
+  const [favorites, setFavorites] = useState<Stock[]>([]);
+  const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
 
   useEffect(() => {
     loadFavorites();
   }, []);
 
-  const loadFavorites = () => {
+  const loadFavorites = (): void => {
     const savedFavorites = FavoritesService.getFavorites();
     setFavorites(savedFavorites);
   };
 
-  const removeFavorite = (ticker) => {
+  const removeFavorite = (ticker: string): void => {
     FavoritesService.removeFavorite(ticker);
     loadFavorites();
   };
@@ -37,7 +38,7 @@ const FavoritesPage = () => {
         <select 
           id="industry-select"
           value={selectedIndustry}
-          onChange={(e) => setSelectedIndustry(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedIndustry(e.target.value)}
         >
           <option value="all">All Industries</option>
           {industries.map(industry => (
@@ -77,11 +78,11 @@ const FavoritesPage = () => {
                   </div>
                   <div className="info-row">
                     <span className="label">Price:</span>
-                    <span className="value">${stock.price}</span>
+                    <span className="value">${stock.price.toLocaleString()}</span>
                   </div>
                   <div className="info-row">
                     <span className="label">Market Cap:</span>
-                    <span className="value">${stock.marketCap}</span>
+                    <span className="value">${stock.marketCap.toLocaleString()}</span>
                   </div>
                 </div>
                 <div className="last-updated">
