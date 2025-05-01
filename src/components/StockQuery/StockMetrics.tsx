@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { StockMetricsProps, StockData } from '../../types/stock';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 import { GrowthMetrics } from '../../types/financial';
@@ -8,7 +8,7 @@ interface NetIncomeItem {
   value: number;
 }
 
-const StockMetrics: React.FC<StockMetricsProps> = ({ 
+const StockMetrics: FC<StockMetricsProps> = ({ 
   data, 
   isLoading, 
   error 
@@ -31,7 +31,7 @@ const StockMetrics: React.FC<StockMetricsProps> = ({
 
   try {
     // Check if we have valid earnings data
-    const hasValidEarnings = data.netIncome.some(item => item.value > 0);
+    const hasValidEarnings = data.netIncome.some((item: NetIncomeItem) => item.value > 0);
     if (!hasValidEarnings) {
       throw new Error('No positive earnings data available');
     }
@@ -99,12 +99,24 @@ const StockMetrics: React.FC<StockMetricsProps> = ({
         ) : (
           <div className="metric-card error-message">
             <h3>Growth Metrics</h3>
-            <p>{errorMessage || 'Unable to calculate growth metrics'}</p>
+            <p className="error">{errorMessage}</p>
           </div>
         )}
+      </div>
+
+      <div className="net-income-section">
+        <h3>Net Income Over Time</h3>
+        <div className="net-income-chart">
+          {data.netIncome.map((item: NetIncomeItem) => (
+            <div key={item.year} className="net-income-bar">
+              <div className="bar-label">{item.year}</div>
+              <div className="bar-value">${(item.value / 1000000).toFixed(2)}M</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
-export default StockMetrics;
+export default StockMetrics; 
