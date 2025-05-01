@@ -1,6 +1,6 @@
 import { StockData } from '../types/favorites';
 
-const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
+const API_KEY = 'C5ZSRLGRQ3YEXBZ2';
 const BASE_URL = 'https://www.alphavantage.co/query';
 
 export const fetchStockData = async (symbol: string): Promise<StockData> => {
