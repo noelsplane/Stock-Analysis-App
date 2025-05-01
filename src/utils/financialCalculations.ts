@@ -1,122 +1,49 @@
-import React, { FC } from 'react';
-import { StockMetricsProps, StockData } from '../../types/stock';
-import { calculateGrowthMetrics } from '../../utils/financialCalculations';
-import { GrowthMetrics } from '../../types/financial';
-
-interface NetIncomeItem {
+interface FinancialData {
+  netIncome: number;
+  price: number;
+  earningsPerShare: number;
   year: number;
-  value: number;
 }
 
-const StockMetrics: FC<StockMetricsProps> = ({ 
-  data, 
-  isLoading, 
-  error 
-}: StockMetricsProps) => {
-  if (isLoading) {
-    return <div className="loading">Loading stock data...</div>;
+interface GrowthMetrics {
+  growthRate: number;
+  peRatio: number;
+  growthToPeRatio: number;
+  isGrowthHigherThanPe: boolean;
+}
+
+export const calculateGrowthRate = (data: FinancialData[]): number => {
+  if (data.length < 2) {
+    throw new Error('Insufficient data to calculate growth rate');
   }
 
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
+  const firstYear = data[0].netIncome;
+  const lastYear = data[data.length - 1].netIncome;
+  const years = data.length - 1;
 
-  if (!data) {
-    return null;
-  }
-
-  // Calculate growth metrics if not already calculated
-  let growthMetrics: GrowthMetrics | null = null;
-  let errorMessage: string | null = null;
-
-  try {
-    // Check if we have valid earnings data
-    const hasValidEarnings = data.netIncome.some((item: NetIncomeItem) => item.value > 0);
-    if (!hasValidEarnings) {
-      throw new Error('No positive earnings data available');
-    }
-
-    // Calculate earnings per share (assuming 1M shares outstanding)
-    const earningsPerShare = data.netIncome[data.netIncome.length - 1].value / 1000000;
-    if (earningsPerShare <= 0) {
-      throw new Error('Earnings per share is not positive');
-    }
-
-    growthMetrics = data.growthMetrics || calculateGrowthMetrics(
-      data.netIncome.map((item: NetIncomeItem) => ({
-        netIncome: item.value,
-        price: data.price,
-        earningsPerShare: item.value / 1000000,
-        year: item.year
-      })),
-      data.price
-    );
-  } catch (calcError) {
-    errorMessage = calcError instanceof Error ? calcError.message : 'Unable to calculate growth metrics';
-  }
-
-  return (
-    <div className="stock-metrics">
-      <h2>{data.symbol} Stock Metrics</h2>
-      
-      <div className="metrics-grid">
-        <div className="metric-card">
-          <h3>Current Price</h3>
-          <p>${data.price.toFixed(2)}</p>
-        </div>
-
-        <div className="metric-card">
-          <h3>52-Week High</h3>
-          <p>${data.high52Week.toFixed(2)}</p>
-        </div>
-
-        <div className="metric-card">
-          <h3>52-Week Low</h3>
-          <p>${data.low52Week.toFixed(2)}</p>
-        </div>
-
-        {growthMetrics ? (
-          <>
-            <div className="metric-card">
-              <h3>Growth Rate</h3>
-              <p className={growthMetrics.growthRate > 0 ? 'positive' : 'negative'}>
-                {growthMetrics.growthRate.toFixed(2)}%
-              </p>
-            </div>
-
-            <div className="metric-card">
-              <h3>P/E Ratio</h3>
-              <p>{growthMetrics.peRatio.toFixed(2)}</p>
-            </div>
-
-            <div className="metric-card">
-              <h3>Growth/P-E Ratio</h3>
-              <p className={growthMetrics.isGrowthHigherThanPe ? 'positive' : 'negative'}>
-                {growthMetrics.growthToPeRatio.toFixed(2)}
-              </p>
-            </div>
-          </>
-        ) : (
-          <div className="metric-card error-message">
-            <h3>Growth Metrics</h3>
-            <p className="error">{errorMessage}</p>
-          </div>
-        )}
-      </div>
-
-      <div className="net-income-section">
-        <h3>Net Income Over Time</h3>
-        <div className="net-income-chart">
-          {data.netIncome.map((item: NetIncomeItem) => (
-            <div key={item.year} className="net-income-bar">
-              <div className="bar-label">{item.year}</div>
-              <div className="bar-value">${(item.value / 1000000).toFixed(2)}M</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  return ((lastYear / firstYear) ** (1 / years) - 1) * 100;
 };
 
-export default StockMetrics; 
+export const calculatePeRatio = (price: number, earningsPerShare: number): number => {
+  if (earningsPerShare <= 0) {
+    throw new Error('Earnings per share must be positive');
+  }
+  return price / earningsPerShare;
+};
+
+export const calculateGrowthToPeRatio = (growthRate: number, peRatio: number): number => {
+  return growthRate / peRatio;
+};
+
+export const calculateGrowthMetrics = (data: FinancialData[], currentPrice: number): GrowthMetrics => {
+  const growthRate = calculateGrowthRate(data);
+  const peRatio = calculatePeRatio(currentPrice, data[data.length - 1].earningsPerShare);
+  const growthToPeRatio = calculateGrowthToPeRatio(growthRate, peRatio);
+
+  return {
+    growthRate,
+    peRatio,
+    growthToPeRatio,
+    isGrowthHigherThanPe: growthRate > peRatio
+  };
+};
