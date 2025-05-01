@@ -1,5 +1,6 @@
 import React from 'react';
 import { StockMetricsProps } from '../../types/stock';
+import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 
 const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) => {
   if (isLoading) {
@@ -13,6 +14,17 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
   if (!data) {
     return null;
   }
+
+  // Calculate growth metrics if not already calculated
+  const growthMetrics = data.growthMetrics || calculateGrowthMetrics(
+    data.netIncome.map(item => ({
+      netIncome: item.value,
+      price: data.price,
+      earningsPerShare: item.value / 1000000, // Assuming 1M shares outstanding
+      year: item.year
+    })),
+    data.price
+  );
 
   return (
     <div className="stock-metrics">
@@ -32,6 +44,25 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
         <div className="metric-card">
           <h3>52-Week Low</h3>
           <p>${data.low52Week.toFixed(2)}</p>
+        </div>
+
+        <div className="metric-card">
+          <h3>Growth Rate</h3>
+          <p className={growthMetrics.growthRate > 0 ? 'positive' : 'negative'}>
+            {growthMetrics.growthRate.toFixed(2)}%
+          </p>
+        </div>
+
+        <div className="metric-card">
+          <h3>P/E Ratio</h3>
+          <p>{growthMetrics.peRatio.toFixed(2)}</p>
+        </div>
+
+        <div className="metric-card">
+          <h3>Growth/P-E Ratio</h3>
+          <p className={growthMetrics.isGrowthHigherThanPe ? 'positive' : 'negative'}>
+            {growthMetrics.growthToPeRatio.toFixed(2)}
+          </p>
         </div>
       </div>
 

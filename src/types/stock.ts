@@ -1,3 +1,5 @@
+import { GrowthMetrics } from './financial';
+
 export interface StockData {
   symbol: string;
   price: number;
@@ -7,6 +9,7 @@ export interface StockData {
     year: number;
     value: number;
   }[];
+  growthMetrics?: GrowthMetrics;
 }
 
 export interface StockQueryFormProps {
