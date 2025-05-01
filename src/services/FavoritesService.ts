@@ -37,5 +37,9 @@ export const FavoritesService = {
   isFavorite: (ticker: string): boolean => {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
+  },
+// New method to clear all favorites
+  clearFavorites: (): void => {
+    localStorage.removeItem(FAVORITES_KEY);
   }
-};
+}; 
