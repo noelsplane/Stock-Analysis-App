@@ -1,14 +1,4 @@
-// Define the Stock interface
-interface Stock {
-  ticker: string;
-  name: string;
-  industry: string;
-  sector: string;
-  price: number;
-  marketCap: number;
-  volume: number;
-  lastUpdated: string;
-}
+import { Stock } from '../types/favorites';
 
 // Key for localStorage
 const FAVORITES_KEY = 'stockAnalyzer_favorites';
@@ -42,4 +32,5 @@ export const FavoritesService = {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
   }
-}; 
+};
+
