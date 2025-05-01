@@ -1,4 +1,4 @@
-interface Stock {
+type Stock = {
   ticker: string;
   name: string;
   industry: string;
@@ -7,7 +7,7 @@ interface Stock {
   marketCap: number;
   volume: number;
   lastUpdated: string;
-}
+};
 
 const FAVORITES_KEY = 'stockAnalyzer_favorites';
 
