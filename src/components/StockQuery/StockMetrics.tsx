@@ -3,7 +3,7 @@ import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 import { FavoritesService } from '../../services/FavoritesService';
 import { Stock, StockData, StockMetricsProps } from '../../types/favorites';
 
-const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) => {
+const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }: StockMetricsProps) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   useEffect(() => {
