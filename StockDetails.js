@@ -1,23 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { FavoritesService } from './src/services/FavoritesService';
 import './StockDetails.css';
 
 const StockDetails = ({ stock }) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
-    setIsFavorited(FavoritesService.isFavorite(stock.ticker));
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setIsFavorited(favorites.some(item => item.ticker === stock.ticker));
   }, [stock.ticker]);
 
   const handleFavorite = () => {
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     if (isFavorited) {
-      FavoritesService.removeFavorite(stock.ticker);
+      favorites = favorites.filter(item => item.ticker !== stock.ticker);
     } else {
-      FavoritesService.addFavorite({
-        ...stock,
+      const stockData = {
+        ticker: stock.ticker,
+        name: stock.name,
+        industry: stock.industry,
+        sector: stock.sector,
+        price: stock.price,
+        marketCap: stock.marketCap,
+        volume: stock.volume,
         lastUpdated: new Date().toISOString()
-      });
+      };
+      favorites.push(stockData);
     }
+    localStorage.setItem("favorites", JSON.stringify(favorites));
     setIsFavorited(!isFavorited);
   };
 
@@ -61,4 +70,4 @@ const StockDetails = ({ stock }) => {
   );
 };
 
-export default StockDetails;
+export default StockDetails; 
