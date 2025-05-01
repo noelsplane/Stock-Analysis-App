@@ -26,4 +26,4 @@ export const FavoritesService = {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
   }
-};
+}; 
