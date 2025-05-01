@@ -1,3 +1,5 @@
+// FavoritesService - Manages favorite stocks in localStorage
+
 // Stock interface defined locally to avoid import issues
 interface Stock {
   ticker: string;
