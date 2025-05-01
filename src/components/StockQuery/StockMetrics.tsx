@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { StockMetricsProps, StockData } from '../../types/stock';
+import { StockMetricsProps, StockData } from '../../types/favorites';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 import { GrowthMetrics } from '../../types/financial';
 
@@ -120,3 +120,4 @@ const StockMetrics: FC<StockMetricsProps> = ({
 };
 
 export default StockMetrics; 
+
