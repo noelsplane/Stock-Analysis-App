@@ -7,13 +7,14 @@ const FAVORITES_KEY = 'stockAnalyzer_favorites';
 export const FavoritesService = {
   // Get all favorite stocks
   getFavorites: (): Stock[] => {
-    const favorites = localStorage.getItem(FAVORITES_KEY);
-    return favorites ? JSON.parse(favorites) : [];
+    const favoritesJson = localStorage.getItem(FAVORITES_KEY);
+    return favoritesJson ? JSON.parse(favoritesJson) : [];
   },
 
   // Add a stock to favorites
   addFavorite: (stock: Stock): void => {
     const favorites = FavoritesService.getFavorites();
+    // Check if the stock is already in the favorites
     if (!favorites.some(f => f.ticker === stock.ticker)) {
       favorites.push(stock);
       localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
