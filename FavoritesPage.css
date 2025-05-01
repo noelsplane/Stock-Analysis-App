@@ -42,10 +42,3 @@
 .remove-button:hover {
   background-color: #cc0000;
 }
-
-.last-updated {
-  margin-top: 15px;
-  font-size: 0.8em;
-  color: #888;
-  text-align: right;
-} 
