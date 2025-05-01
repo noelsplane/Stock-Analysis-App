@@ -28,3 +28,4 @@ export const FavoritesService = {
     return favorites.some(f => f.ticker === ticker);
   }
 };
+
