@@ -1,21 +1,9 @@
-.favorites-page {
+.favorites-container {
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .industry-filter {
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.industry-filter select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 16px;
+  margin-bottom: 20px;
 }
 
 .favorites-grid {
@@ -27,86 +15,31 @@
 .favorite-card {
   border: 1px solid #ddd;
   border-radius: 8px;
-  overflow: hidden;
+  padding: 15px;
   background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.card-header {
-  background-color: #f8f9fa;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
+.favorite-card h3 {
+  margin: 0 0 10px 0;
 }
 
-.card-header h3 {
-  margin: 0;
-  color: #333;
+.favorite-card p {
+  margin: 5px 0;
+  color: #666;
 }
 
-.remove-btn {
-  background: none;
+.remove-button {
+  background-color: #ff4444;
+  color: white;
   border: none;
-  color: #dc3545;
-  font-size: 24px;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
-  padding: 0 8px;
+  margin-top: 10px;
 }
 
-.remove-btn:hover {
-  color: #c82333;
+.remove-button:hover {
+  background-color: #cc0000;
 }
 
-.card-content {
-  padding: 15px;
-}
-
-.stock-name {
-  font-size: 18px;
-  color: #666;
-  margin: 0 0 15px 0;
-}
-
-.stock-info {
-  display: grid;
-  gap: 10px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.label {
-  color: #666;
-  font-weight: 500;
-}
-
-.value {
-  color: #333;
-}
-
-.last-updated {
-  margin-top: 15px;
-  font-size: 12px;
-  color: #999;
-  text-align: right;
-}
-
-.no-favorites {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-}
-
-.no-favorites p:first-child {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.no-favorites p:last-child {
-  color: #999;
-}
