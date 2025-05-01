@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { StockData } from '../types/stock';
+import { StockData } from '../types/favorites';
 
 const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 const BASE_URL = 'https://www.alphavantage.co/query';
