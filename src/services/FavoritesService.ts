@@ -38,8 +38,22 @@ export const FavoritesService = {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
   },
-// New method to clear all favorites
+
+  // New method to clear all favorites
   clearFavorites: (): void => {
     localStorage.removeItem(FAVORITES_KEY);
+  },
+
+  // Get favorites grouped by industry
+  getFavoritesByIndustry: (): Record<string, Stock[]> => {
+    const favorites = FavoritesService.getFavorites();
+    return favorites.reduce((acc, stock) => {
+      const industry = stock.industry || 'Uncategorized';
+      if (!acc[industry]) {
+        acc[industry] = [];
+      }
+      acc[industry].push(stock);
+      return acc;
+    }, {} as Record<string, Stock[]>);
   }
 }; 
