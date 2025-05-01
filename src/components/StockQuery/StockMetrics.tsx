@@ -36,11 +36,17 @@ const StockMetrics: React.FC<StockMetricsProps> = ({
       throw new Error('No positive earnings data available');
     }
 
+    // Calculate earnings per share (assuming 1M shares outstanding)
+    const earningsPerShare = data.netIncome[data.netIncome.length - 1].value / 1000000;
+    if (earningsPerShare <= 0) {
+      throw new Error('Earnings per share is not positive');
+    }
+
     growthMetrics = data.growthMetrics || calculateGrowthMetrics(
       data.netIncome.map((item: NetIncomeItem) => ({
         netIncome: item.value,
         price: data.price,
-        earningsPerShare: item.value / 1000000, // Assuming 1M shares outstanding
+        earningsPerShare: item.value / 1000000,
         year: item.year
       })),
       data.price
@@ -96,18 +102,6 @@ const StockMetrics: React.FC<StockMetricsProps> = ({
             <p>{errorMessage || 'Unable to calculate growth metrics'}</p>
           </div>
         )}
-      </div>
-
-      <div className="net-income-section">
-        <h3>Net Income Over Time</h3>
-        <div className="net-income-chart">
-          {data.netIncome.map((item: NetIncomeItem) => (
-            <div key={item.year} className="net-income-bar">
-              <div className="bar-label">{item.year}</div>
-              <div className="bar-value">${(item.value / 1000000).toFixed(2)}M</div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
