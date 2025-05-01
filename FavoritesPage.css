@@ -1,44 +1,9 @@
-.favorites-page {
-  max-width: 1200px;
-  margin: 0 auto;
+.favorites-container {
   padding: 20px;
 }
 
-.favorites-page h1 {
-  color: #333;
-  margin-bottom: 30px;
-}
-
 .industry-filter {
-  margin-bottom: 30px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.industry-filter label {
-  font-weight: bold;
-  color: #444;
-}
-
-.industry-filter select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 1em;
-}
-
-.no-favorites {
-  text-align: center;
-  padding: 40px;
-  background-color: #f8f8f8;
-  border-radius: 8px;
-  color: #666;
-}
-
-.no-favorites p {
-  margin: 10px 0;
+  margin-bottom: 20px;
 }
 
 .favorites-grid {
@@ -48,73 +13,34 @@
 }
 
 .favorite-card {
-  background-color: white;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 15px;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ddd;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.card-header h3 {
-  margin: 0;
-  color: #333;
+.favorite-card h3 {
+  margin: 0 0 10px 0;
 }
 
-.remove-btn {
-  background: none;
+.favorite-card p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.remove-button {
+  background-color: #ff4444;
+  color: white;
   border: none;
-  font-size: 1.5em;
-  color: #666;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
-  padding: 0 5px;
+  margin-top: 10px;
 }
 
-.remove-btn:hover {
-  color: #ff4444;
-}
-
-.card-content {
-  padding: 15px;
-}
-
-.stock-name {
-  font-weight: bold;
-  color: #444;
-  margin: 0 0 15px 0;
-}
-
-.stock-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.label {
-  color: #666;
-}
-
-.value {
-  color: #333;
-  font-weight: bold;
+.remove-button:hover {
+  background-color: #cc0000;
 }
 
 .last-updated {
