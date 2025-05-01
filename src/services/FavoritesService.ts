@@ -1,4 +1,4 @@
-import { Stock } from '../types/favorites';
+import { Stock } from '../types/stock'; // Correct import for Stock
 
 // Key for localStorage
 const FAVORITES_KEY = 'stockAnalyzer_favorites';
@@ -7,8 +7,8 @@ const FAVORITES_KEY = 'stockAnalyzer_favorites';
 export const FavoritesService = {
   // Get all favorite stocks
   getFavorites: (): Stock[] => {
-    const favoritesJson = localStorage.getItem(FAVORITES_KEY);
-    return favoritesJson ? JSON.parse(favoritesJson) : [];
+    const favorites = localStorage.getItem(FAVORITES_KEY);
+    return favorites ? JSON.parse(favorites) : [];
   },
 
   // Add a stock to favorites
