@@ -1,28 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 import { FavoritesService } from '../../services/FavoritesService';
-import { Stock } from '../../types/favorites';
-
-interface StockMetricsProps {
-  data: {
-    symbol: string;
-    price: number;
-    high52Week: number;
-    low52Week: number;
-    netIncome: Array<{
-      value: number;
-      year: number;
-    }>;
-    growthMetrics?: {
-      growthRate: number;
-      peRatio: number;
-      isGrowthHigherThanPe: boolean;
-      growthToPeRatio: number;
-    };
-  };
-  isLoading: boolean;
-  error: string | null;
-}
+import { Stock, StockData, StockMetricsProps } from '../../types/favorites';
 
 const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -44,6 +23,7 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
       sector: 'Unknown', // We'll need to get the actual sector
       price: data.price,
       marketCap: 0, // We'll need to get the actual market cap
+      volume: 0, // We'll need to get the actual volume
       lastUpdated: new Date().toISOString()
     };
 
@@ -73,7 +53,7 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
 
   try {
     // Check if we have valid earnings data
-    const hasValidEarnings = data.netIncome.some(item => item.value > 0);
+    const hasValidEarnings = data.netIncome.some((item: { value: number }) => item.value > 0);
     if (!hasValidEarnings) {
       throw new Error('No positive earnings data available');
     }
@@ -85,7 +65,7 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
     }
 
     growthMetrics = data.growthMetrics || calculateGrowthMetrics(
-      data.netIncome.map(item => ({
+      data.netIncome.map((item: { value: number; year: number }) => ({
         netIncome: item.value,
         price: data.price,
         earningsPerShare: item.value / 1000000,
@@ -158,7 +138,7 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
       <div className="net-income-section">
         <h3>Net Income Over Time</h3>
         <div className="net-income-chart">
-          {data.netIncome.map(item => (
+          {data.netIncome.map((item: { year: number; value: number }) => (
             <div key={item.year} className="net-income-bar">
               <div className="bar-label">{item.year}</div>
               <div 
@@ -174,4 +154,4 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
   );
 };
 
-export default StockMetrics;
+export default StockMetrics; 
