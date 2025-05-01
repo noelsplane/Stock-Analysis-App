@@ -1,8 +1,18 @@
 import React from 'react';
-import { StockMetricsProps } from '../../types/stock';
+import { StockMetricsProps, StockData } from '../../types/stock';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
+import { GrowthMetrics } from '../../types/financial';
 
-const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) => {
+interface NetIncomeItem {
+  year: number;
+  value: number;
+}
+
+const StockMetrics: React.FC<StockMetricsProps> = ({ 
+  data, 
+  isLoading, 
+  error 
+}: StockMetricsProps) => {
   if (isLoading) {
     return <div className="loading">Loading stock data...</div>;
   }
@@ -16,15 +26,28 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
   }
 
   // Calculate growth metrics if not already calculated
-  const growthMetrics = data.growthMetrics || calculateGrowthMetrics(
-    data.netIncome.map(item => ({
-      netIncome: item.value,
-      price: data.price,
-      earningsPerShare: item.value / 1000000, // Assuming 1M shares outstanding
-      year: item.year
-    })),
-    data.price
-  );
+  let growthMetrics: GrowthMetrics | null = null;
+  let errorMessage: string | null = null;
+
+  try {
+    // Check if we have valid earnings data
+    const hasValidEarnings = data.netIncome.some(item => item.value > 0);
+    if (!hasValidEarnings) {
+      throw new Error('No positive earnings data available');
+    }
+
+    growthMetrics = data.growthMetrics || calculateGrowthMetrics(
+      data.netIncome.map((item: NetIncomeItem) => ({
+        netIncome: item.value,
+        price: data.price,
+        earningsPerShare: item.value / 1000000, // Assuming 1M shares outstanding
+        year: item.year
+      })),
+      data.price
+    );
+  } catch (calcError) {
+    errorMessage = calcError instanceof Error ? calcError.message : 'Unable to calculate growth metrics';
+  }
 
   return (
     <div className="stock-metrics">
@@ -46,30 +69,39 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
           <p>${data.low52Week.toFixed(2)}</p>
         </div>
 
-        <div className="metric-card">
-          <h3>Growth Rate</h3>
-          <p className={growthMetrics.growthRate > 0 ? 'positive' : 'negative'}>
-            {growthMetrics.growthRate.toFixed(2)}%
-          </p>
-        </div>
+        {growthMetrics ? (
+          <>
+            <div className="metric-card">
+              <h3>Growth Rate</h3>
+              <p className={growthMetrics.growthRate > 0 ? 'positive' : 'negative'}>
+                {growthMetrics.growthRate.toFixed(2)}%
+              </p>
+            </div>
 
-        <div className="metric-card">
-          <h3>P/E Ratio</h3>
-          <p>{growthMetrics.peRatio.toFixed(2)}</p>
-        </div>
+            <div className="metric-card">
+              <h3>P/E Ratio</h3>
+              <p>{growthMetrics.peRatio.toFixed(2)}</p>
+            </div>
 
-        <div className="metric-card">
-          <h3>Growth/P-E Ratio</h3>
-          <p className={growthMetrics.isGrowthHigherThanPe ? 'positive' : 'negative'}>
-            {growthMetrics.growthToPeRatio.toFixed(2)}
-          </p>
-        </div>
+            <div className="metric-card">
+              <h3>Growth/P-E Ratio</h3>
+              <p className={growthMetrics.isGrowthHigherThanPe ? 'positive' : 'negative'}>
+                {growthMetrics.growthToPeRatio.toFixed(2)}
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="metric-card error-message">
+            <h3>Growth Metrics</h3>
+            <p>{errorMessage || 'Unable to calculate growth metrics'}</p>
+          </div>
+        )}
       </div>
 
       <div className="net-income-section">
         <h3>Net Income Over Time</h3>
         <div className="net-income-chart">
-          {data.netIncome.map((item) => (
+          {data.netIncome.map((item: NetIncomeItem) => (
             <div key={item.year} className="net-income-bar">
               <div className="bar-label">{item.year}</div>
               <div className="bar-value">${(item.value / 1000000).toFixed(2)}M</div>
@@ -81,4 +113,4 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
   );
 };
 
-export default StockMetrics; 
+export default StockMetrics;
