@@ -1,3 +1,4 @@
+
 import { Stock } from '../types/stock';
 
 const FAVORITES_KEY = 'favoriteStocks';
