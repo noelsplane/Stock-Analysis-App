@@ -1,32 +1,38 @@
 import React, { useState, useEffect } from 'react';
+import { FavoritesService } from './src/services/FavoritesService';
 import './StockDetails.css';
 
-const StockDetails = ({ stock }) => {
+interface Stock {
+  ticker: string;
+  name: string;
+  industry: string;
+  sector: string;
+  price: number;
+  marketCap: number;
+  volume: number;
+  lastUpdated: string;
+}
+
+interface StockDetailsProps {
+  stock: Stock;
+}
+
+const StockDetails: React.FC<StockDetailsProps> = ({ stock }) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
-    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setIsFavorited(favorites.some(item => item.ticker === stock.ticker));
+    setIsFavorited(FavoritesService.isFavorite(stock.ticker));
   }, [stock.ticker]);
 
   const handleFavorite = () => {
-    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     if (isFavorited) {
-      favorites = favorites.filter(item => item.ticker !== stock.ticker);
+      FavoritesService.removeFavorite(stock.ticker);
     } else {
-      const stockData = {
-        ticker: stock.ticker,
-        name: stock.name,
-        industry: stock.industry,
-        sector: stock.sector,
-        price: stock.price,
-        marketCap: stock.marketCap,
-        volume: stock.volume,
+      FavoritesService.addFavorite({
+        ...stock,
         lastUpdated: new Date().toISOString()
-      };
-      favorites.push(stockData);
+      });
     }
-    localStorage.setItem("favorites", JSON.stringify(favorites));
     setIsFavorited(!isFavorited);
   };
 
