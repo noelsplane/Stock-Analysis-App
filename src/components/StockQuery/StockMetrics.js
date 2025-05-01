@@ -1,19 +1,8 @@
-import React, { FC } from 'react';
-import { StockMetricsProps, StockData } from '../../types/favorites';
+import React from 'react';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
-import { GrowthMetrics } from '../../types/financial';
 import { FavoritesService } from '../../services/FavoritesService';
 
-interface NetIncomeItem {
-  year: number;
-  value: number;
-}
-
-const StockMetrics: FC<StockMetricsProps> = ({ 
-  data, 
-  isLoading, 
-  error 
-}: StockMetricsProps) => {
+const StockMetrics = ({ data, isLoading, error }) => {
   if (isLoading) {
     return <div className="loading">Loading stock data...</div>;
   }
@@ -27,12 +16,12 @@ const StockMetrics: FC<StockMetricsProps> = ({
   }
 
   // Calculate growth metrics if not already calculated
-  let growthMetrics: GrowthMetrics | null = null;
-  let errorMessage: string | null = null;
+  let growthMetrics = null;
+  let errorMessage = null;
 
   try {
     // Check if we have valid earnings data
-    const hasValidEarnings = data.netIncome.some((item: NetIncomeItem) => item.value > 0);
+    const hasValidEarnings = data.netIncome.some(item => item.value > 0);
     if (!hasValidEarnings) {
       throw new Error('No positive earnings data available');
     }
@@ -44,7 +33,7 @@ const StockMetrics: FC<StockMetricsProps> = ({
     }
 
     growthMetrics = data.growthMetrics || calculateGrowthMetrics(
-      data.netIncome.map((item: NetIncomeItem) => ({
+      data.netIncome.map(item => ({
         netIncome: item.value,
         price: data.price,
         earningsPerShare: item.value / 1000000,
@@ -108,7 +97,7 @@ const StockMetrics: FC<StockMetricsProps> = ({
       <div className="net-income-section">
         <h3>Net Income Over Time</h3>
         <div className="net-income-chart">
-          {data.netIncome.map((item: NetIncomeItem) => (
+          {data.netIncome.map(item => (
             <div key={item.year} className="net-income-bar">
               <div className="bar-label">{item.year}</div>
               <div className="bar-value">${(item.value / 1000000).toFixed(2)}M</div>
@@ -120,5 +109,4 @@ const StockMetrics: FC<StockMetricsProps> = ({
   );
 };
 
-export default StockMetrics; 
-
+export default StockMetrics;
