@@ -1,3 +1,4 @@
+// Define the Stock interface
 interface Stock {
   ticker: string;
   name: string;
@@ -9,14 +10,18 @@ interface Stock {
   lastUpdated: string;
 }
 
+// Key for localStorage
 const FAVORITES_KEY = 'stockAnalyzer_favorites';
 
+// Favorites service implementation
 export const FavoritesService = {
+  // Get all favorite stocks
   getFavorites: (): Stock[] => {
     const favorites = localStorage.getItem(FAVORITES_KEY);
     return favorites ? JSON.parse(favorites) : [];
   },
 
+  // Add a stock to favorites
   addFavorite: (stock: Stock): void => {
     const favorites = FavoritesService.getFavorites();
     if (!favorites.some(f => f.ticker === stock.ticker)) {
@@ -25,12 +30,14 @@ export const FavoritesService = {
     }
   },
 
+  // Remove a stock from favorites
   removeFavorite: (ticker: string): void => {
     const favorites = FavoritesService.getFavorites();
     const updatedFavorites = favorites.filter(f => f.ticker !== ticker);
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
   },
 
+  // Check if a stock is favorited
   isFavorite: (ticker: string): boolean => {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
