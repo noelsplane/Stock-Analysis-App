@@ -2,22 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FavoritesService } from './src/services/FavoritesService';
 import './StockDetails.css';
 
-interface Stock {
-  ticker: string;
-  name: string;
-  industry: string;
-  sector: string;
-  price: number;
-  marketCap: number;
-  volume: number;
-  lastUpdated: string;
-}
-
-interface StockDetailsProps {
-  stock: Stock;
-}
-
-const StockDetails: React.FC<StockDetailsProps> = ({ stock }) => {
+const StockDetails = ({ stock }) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
