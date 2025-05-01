@@ -1,4 +1,13 @@
-import { GrowthMetrics } from './financial';
+export interface Stock {
+  ticker: string;
+  name: string;
+  industry: string;
+  sector: string;
+  price: number;
+  marketCap: number;
+  volume: number;
+  lastUpdated: string;
+}
 
 export interface StockData {
   symbol: string;
@@ -21,15 +30,4 @@ export interface StockMetricsProps {
   data: StockData | null;
   isLoading: boolean;
   error: string | null;
-}
-
-export interface Stock {
-  ticker: string;
-  name: string;
-  industry: string;
-  sector: string;
-  price: number;
-  marketCap: number;
-  volume: number;
-  lastUpdated: string;
 }
