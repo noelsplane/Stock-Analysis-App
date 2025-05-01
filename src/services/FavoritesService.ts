@@ -1,27 +1,17 @@
-import { Stock } from '../types/favorites';
+import { Stock } from '../types/stock';
 
-const FAVORITES_KEY = 'stockAnalyzer_favorites';
+const FAVORITES_KEY = 'favoriteStocks';
 
 export const FavoritesService = {
   getFavorites: (): Stock[] => {
-    const favorites = localStorage.getItem(FAVORITES_KEY);
-    return favorites ? JSON.parse(favorites) : [];
+    const favoritesJson = localStorage.getItem(FAVORITES_KEY);
+    return favoritesJson ? JSON.parse(favoritesJson) : [];
   },
 
   addFavorite: (stock: Stock): void => {
     const favorites = FavoritesService.getFavorites();
     if (!favorites.some(f => f.ticker === stock.ticker)) {
-      const favoriteStock: Stock = {
-        ticker: stock.ticker,
-        name: stock.name,
-        industry: stock.industry,
-        sector: stock.sector,
-        price: stock.price,
-        marketCap: stock.marketCap,
-        volume: stock.volume,
-        lastUpdated: new Date().toISOString()
-      };
-      favorites.push(favoriteStock);
+      favorites.push(stock);
       localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
     }
   },
@@ -33,11 +23,6 @@ export const FavoritesService = {
   },
 
   isFavorite: (ticker: string): boolean => {
-    const favorites = FavoritesService.getFavorites();
-    return favorites.some(f => f.ticker === ticker);
-  }
-}; 
-  isFavorite: (ticker) => {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
   }
