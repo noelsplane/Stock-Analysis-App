@@ -22,6 +22,9 @@ export interface StockData {
   industry?: string;
   high52Week: number;
   low52Week: number;
+  revenueGrowthRate?: number;
+  netIncomeGrowthRate?: number;
+  growthAdjustedPE?: number;
 }
 
 export interface StockMetricsProps {

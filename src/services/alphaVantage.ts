@@ -3,6 +3,14 @@ import { StockData } from '../types/stock';
 const API_KEY = 'CX8QLUH2EGEGV8S6';
 const BASE_URL = 'https://www.alphavantage.co/query';
 
+function calculateGrowthRate(values: number[]): number {
+  if (values.length < 2) return 0;
+  const oldestValue = values[0];
+  const newestValue = values[values.length - 1];
+  if (oldestValue <= 0) return 0;
+  return ((newestValue - oldestValue) / Math.abs(oldestValue)) * 100;
+}
+
 export async function fetchStockData(symbol: string): Promise<StockData> {
   if (!API_KEY) {
     throw new Error('Alpha Vantage API key not found');
@@ -35,23 +43,39 @@ export async function fetchStockData(symbol: string): Promise<StockData> {
   );
   const incomeData = await incomeResponse.json();
 
-  // Extract the last 4 quarters of net income
+  // Extract the last 4 quarters of net income and revenue
   const quarterlyReports = incomeData.quarterlyReports || [];
   const netIncome = quarterlyReports
     .slice(0, 4)
     .map((report: any) => parseFloat(report.netIncome) || 0)
     .reverse(); // Reverse to show oldest to newest
 
+  const revenue = quarterlyReports
+    .slice(0, 4)
+    .map((report: any) => parseFloat(report.totalRevenue) || 0)
+    .reverse();
+
+  // Calculate growth rates
+  const netIncomeGrowthRate = calculateGrowthRate(netIncome);
+  const revenueGrowthRate = calculateGrowthRate(revenue);
+  
+  // Calculate growth rate over PE ratio
+  const peRatio = parseFloat(overviewData.PERatio) || 0;
+  const growthAdjustedPE = peRatio > 0 ? revenueGrowthRate / peRatio : 0;
+
   return {
     symbol: quote['01. symbol'],
-    name: quote['01. symbol'], // Alpha Vantage doesn't provide company name in this endpoint
+    name: quote['01. symbol'],
     price: parseFloat(quote['05. price']),
     marketCap: parseFloat(overviewData.MarketCapitalization) || 0,
-    peRatio: parseFloat(overviewData.PERatio) || 0,
+    peRatio: peRatio,
     dividendYield: parseFloat(overviewData.DividendYield) || 0,
     netIncome: netIncome,
     industry: overviewData.Industry || 'Unknown',
     high52Week: parseFloat(quote['52. week high']) || 0,
-    low52Week: parseFloat(quote['52. week low']) || 0
+    low52Week: parseFloat(quote['52. week low']) || 0,
+    revenueGrowthRate,
+    netIncomeGrowthRate,
+    growthAdjustedPE
   };
 } 

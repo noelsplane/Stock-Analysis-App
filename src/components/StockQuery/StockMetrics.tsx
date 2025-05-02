@@ -65,6 +65,24 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ stockData }) => {
             {stockData.dividendYield.toFixed(2)}%
           </p>
         </div>
+        <div className="metric-card">
+          <h3>Revenue Growth</h3>
+          <p className={stockData.revenueGrowthRate && stockData.revenueGrowthRate > 0 ? 'positive' : 'negative'}>
+            {(stockData.revenueGrowthRate || 0).toFixed(2)}%
+          </p>
+        </div>
+        <div className="metric-card">
+          <h3>Net Income Growth</h3>
+          <p className={stockData.netIncomeGrowthRate && stockData.netIncomeGrowthRate > 0 ? 'positive' : 'negative'}>
+            {(stockData.netIncomeGrowthRate || 0).toFixed(2)}%
+          </p>
+        </div>
+        <div className="metric-card">
+          <h3>Growth Rate / P/E</h3>
+          <p className={stockData.growthAdjustedPE && stockData.growthAdjustedPE > 0 ? 'positive' : 'negative'}>
+            {(stockData.growthAdjustedPE || 0).toFixed(2)}
+          </p>
+        </div>
       </div>
 
       <div className="net-income-section">
