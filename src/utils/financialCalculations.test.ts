@@ -1,9 +1,12 @@
+import '@testing-library/jest-dom';
 import {
     calculateGrowthRate,
     calculatePeRatio,
     calculateGrowthToPeRatio,
     calculateGrowthMetrics
 } from './financialCalculations';
+
+import { describe, it, expect } from '@jest/globals';
 
 describe('Financial Calculations', () => {
     const mockFinancialData = [
