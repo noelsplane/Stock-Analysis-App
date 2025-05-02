@@ -1,3 +1,5 @@
+import { GrowthMetrics } from './financialTypes';
+
 export interface Stock {
   ticker: string;
   name: string;
@@ -17,12 +19,7 @@ export interface StockData extends Stock {
     year: number;
     value: number;
   }>;
-  growthMetrics?: {
-    growthRate: number;
-    peRatio: number;
-    growthToPeRatio: number;
-    isGrowthHigherThanPe: boolean;
-  };
+  growthMetrics?: GrowthMetrics;
 }
 
 export interface StockMetricsProps {
