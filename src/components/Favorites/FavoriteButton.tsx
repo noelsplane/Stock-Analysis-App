@@ -1,33 +1,30 @@
 import React from 'react';
 import { useFavorites } from '../../context/FavoritesContext';
-import { FavoriteStock } from '../../types/stock';
+import { StockData } from '../../types/stock';
 
 interface FavoriteButtonProps {
-  stock: FavoriteStock;
+  stock: StockData;
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ stock }) => {
-  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   const isFavorited = isFavorite(stock.symbol);
 
-  const handleToggleFavorite = () => {
+  const handleClick = () => {
     if (isFavorited) {
       removeFavorite(stock.symbol);
     } else {
-      addFavorite({
-        ...stock,
-        addedAt: new Date().toISOString()
-      });
+      addFavorite(stock);
     }
   };
 
   return (
     <button
-      onClick={handleToggleFavorite}
-      className={`favorite-button ${isFavorited ? 'favorited' : ''}`}
-      title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+      className={`favorite-btn ${isFavorited ? 'active' : ''}`}
+      onClick={handleClick}
+      aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
     >
-      {isFavorited ? '★' : '☆'}
+      ★
     </button>
   );
 };
