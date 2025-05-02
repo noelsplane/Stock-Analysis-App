@@ -1,38 +1,31 @@
-import React, { useState } from 'react';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { FavoritesProvider } from './context/FavoritesContext';
 import StockQueryForm from './components/StockQuery/StockQueryForm';
-import StockMetrics from './components/StockQuery/StockMetrics';
-import { fetchStockData } from './services/alphaVantage';
-import { StockData } from './types/stock';
+import FavoritesPage from './components/Favorites/FavoritesPage';
+import './App.css';
 
 function App() {
-  const [stockData, setStockData] = useState<StockData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleStockQuery = async (symbol: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await fetchStockData(symbol);
-      setStockData(data);
-    } catch (err) {
-      setError('Failed to fetch stock data. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Stock Analyzer</h1>
-      </header>
-      <main className="App-main">
-        <StockQueryForm onSubmit={handleStockQuery} isLoading={isLoading} />
-        <StockMetrics data={stockData} isLoading={isLoading} error={error} />
-      </main>
-    </div>
+    <Router>
+      <FavoritesProvider>
+        <div className="App">
+          <nav className="navbar">
+            <div className="nav-links">
+              <Link to="/" className="nav-link">Home</Link>
+              <Link to="/favorites" className="nav-link">Favorites</Link>
+            </div>
+          </nav>
+
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<StockQueryForm />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+            </Routes>
+          </main>
+        </div>
+      </FavoritesProvider>
+    </Router>
   );
 }
 
