@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StockQueryFormProps } from '../../types/favorites';
+import { StockQueryFormProps } from '../../types/stock';
 
 const StockQueryForm: React.FC<StockQueryFormProps> = ({ onSubmit, isLoading }) => {
   const [symbol, setSymbol] = useState('');

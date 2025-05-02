@@ -1,7 +1,7 @@
 import { GrowthMetrics } from './financial';
 
 export interface Stock {
-  ticker: string;
+  symbol: string;
   name: string;
   industry: string;
   sector: string;
@@ -11,26 +11,25 @@ export interface Stock {
   lastUpdated: string;
 }
 
-export interface StockData {
-  symbol: string;
-  price: number;
+export interface StockData extends Stock {
   high52Week: number;
   low52Week: number;
-  netIncome: {
+  netIncome: Array<{
     year: number;
     value: number;
-  }[];
-}
-
-export interface StockQueryFormProps {
-  onSubmit: (symbol: string) => void;
-  isLoading: boolean;
+  }>;
+  growthMetrics?: GrowthMetrics;
 }
 
 export interface StockMetricsProps {
   data: StockData | null;
   isLoading: boolean;
   error: string | null;
+}
+
+export interface StockQueryFormProps {
+  onSubmit: (symbol: string) => void;
+  isLoading: boolean;
 }
 
 export interface FavoriteStock {

@@ -1,4 +1,4 @@
-import { StockData } from '../types/favorites';
+import { StockData } from '../types/stock';
 
 const API_KEY = 'C5ZSRLGRQ3YEXBZ2';
 const BASE_URL = 'https://www.alphavantage.co/query';
@@ -20,7 +20,7 @@ export const fetchStockData = async (symbol: string): Promise<StockData> => {
   }
 
   return {
-    ticker: quote['01. symbol'],
+    symbol: quote['01. symbol'],
     name: quote['01. symbol'], // Alpha Vantage doesn't provide company name in this endpoint
     industry: '', // Alpha Vantage doesn't provide this in this endpoint
     sector: '', // Alpha Vantage doesn't provide this in this endpoint
@@ -28,7 +28,6 @@ export const fetchStockData = async (symbol: string): Promise<StockData> => {
     marketCap: 0, // Alpha Vantage doesn't provide this in this endpoint
     volume: parseInt(quote['06. volume']),
     lastUpdated: new Date().toISOString(),
-    symbol: quote['01. symbol'],
     high52Week: 0, // Alpha Vantage doesn't provide this in this endpoint
     low52Week: 0, // Alpha Vantage doesn't provide this in this endpoint
     netIncome: [], // Alpha Vantage doesn't provide this in this endpoint

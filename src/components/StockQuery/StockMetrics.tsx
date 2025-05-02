@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 import { FavoritesService } from '../../services/FavoritesService';
-import { Stock, StockData, StockMetricsProps } from '../../types/favorites';
+import { StockData, StockMetricsProps, FavoriteStock } from '../../types/stock';
 import { GrowthMetrics } from '../../types/financial';
 
-const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }: StockMetricsProps) => {
+const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   useEffect(() => {
     if (data) {
       const favorites = FavoritesService.getFavorites();
-      setIsFavorite(favorites.some(fav => fav.ticker === data.symbol));
+      setIsFavorite(favorites.some(fav => fav.symbol === data.symbol));
     }
   }, [data]);
 
   const toggleFavorite = (): void => {
     if (!data) return;
 
-    const stock: Stock = {
-      ticker: data.symbol,
-      name: data.symbol, // We'll need to get the actual company name
-      industry: 'Unknown', // We'll need to get the actual industry
-      sector: 'Unknown', // We'll need to get the actual sector
-      price: data.price,
-      marketCap: 0, // We'll need to get the actual market cap
-      volume: 0, // We'll need to get the actual volume
-      lastUpdated: new Date().toISOString()
+    const stock: FavoriteStock = {
+      symbol: data.symbol,
+      companyName: data.name,
+      industry: data.industry || 'Unknown',
+      addedAt: new Date().toISOString(),
+      lastPrice: data.price
     };
 
     if (isFavorite) {
@@ -49,33 +46,16 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }: S
   }
 
   // Calculate growth metrics if not already calculated
-  let growthMetrics = null;
+  let growthMetrics = data.growthMetrics;
   let errorMessage = null;
 
-  try {
-    // Check if we have valid earnings data
-    const hasValidEarnings = data.netIncome.some((item: { value: number }) => item.value > 0);
-    if (!hasValidEarnings) {
-      throw new Error('No positive earnings data available');
+  if (!growthMetrics && data.netIncome.length >= 2) {
+    try {
+      growthMetrics = calculateGrowthMetrics(data.netIncome);
+    } catch (err) {
+      errorMessage = 'Unable to calculate growth metrics';
+      console.error('Error calculating growth metrics:', err);
     }
-
-    // Calculate earnings per share (assuming 1M shares outstanding)
-    const earningsPerShare = data.netIncome[data.netIncome.length - 1].value / 1000000;
-    if (earningsPerShare <= 0) {
-      throw new Error('Earnings per share is not positive');
-    }
-
-    growthMetrics = data.growthMetrics || calculateGrowthMetrics(
-      data.netIncome.map((item: { value: number; year: number }) => ({
-        netIncome: item.value,
-        price: data.price,
-        earningsPerShare: item.value / 1000000,
-        year: item.year
-      })),
-      data.price
-    );
-  } catch (calcError) {
-    errorMessage = calcError instanceof Error ? calcError.message : 'Unable to calculate growth metrics';
   }
 
   return (
@@ -139,7 +119,7 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }: S
       <div className="net-income-section">
         <h3>Net Income Over Time</h3>
         <div className="net-income-chart">
-          {data.netIncome.map((item: { year: number; value: number }) => (
+          {data.netIncome.map((item) => (
             <div key={item.year} className="net-income-bar">
               <div className="bar-label">{item.year}</div>
               <div 
