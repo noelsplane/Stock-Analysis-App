@@ -29,6 +29,10 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ stockData }) => {
     }
   };
 
+  // Calculate the maximum absolute value for scaling the chart
+  const maxNetIncome = Math.max(...stockData.netIncome.map(Math.abs), 1);
+  const scaleFactor = 150 / maxNetIncome; // 150px is the maximum height we want
+
   return (
     <div className="stock-metrics">
       <div className="stock-header">
@@ -65,21 +69,29 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ stockData }) => {
 
       <div className="net-income-section">
         <h3>Net Income (Last 4 Quarters)</h3>
-        <div className="net-income-chart">
-          {stockData.netIncome.map((income, index) => (
-            <div key={index} className="net-income-bar">
-              <div
-                className="bar-value"
-                style={{
-                  height: `${Math.abs(income) / 1000}px`,
-                  backgroundColor: income >= 0 ? 'var(--success-color)' : 'var(--error-color)'
-                }}
-              />
-              <div className="bar-label">Q{4 - index}</div>
-              <div className="bar-value-label">${(income / 1e6).toFixed(1)}M</div>
-            </div>
-          ))}
-        </div>
+        {stockData.netIncome.length > 0 ? (
+          <div className="net-income-chart">
+            {stockData.netIncome.map((income, index) => (
+              <div key={index} className="net-income-bar">
+                <div
+                  className="bar-value"
+                  style={{
+                    height: `${Math.abs(income) * scaleFactor}px`,
+                    backgroundColor: income >= 0 ? 'var(--success-color)' : 'var(--error-color)'
+                  }}
+                />
+                <div className="bar-label">Q{4 - index}</div>
+                <div className="bar-value-label">
+                  ${(income / 1e6).toFixed(1)}M
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="no-data-message">
+            No net income data available
+          </div>
+        )}
       </div>
     </div>
   );

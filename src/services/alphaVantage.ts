@@ -29,6 +29,19 @@ export async function fetchStockData(symbol: string): Promise<StockData> {
   );
   const overviewData = await overviewResponse.json();
 
+  // Fetch quarterly income statements
+  const incomeResponse = await fetch(
+    `${BASE_URL}?function=INCOME_STATEMENT&symbol=${symbol}&apikey=${API_KEY}`
+  );
+  const incomeData = await incomeResponse.json();
+
+  // Extract the last 4 quarters of net income
+  const quarterlyReports = incomeData.quarterlyReports || [];
+  const netIncome = quarterlyReports
+    .slice(0, 4)
+    .map((report: any) => parseFloat(report.netIncome) || 0)
+    .reverse(); // Reverse to show oldest to newest
+
   return {
     symbol: quote['01. symbol'],
     name: quote['01. symbol'], // Alpha Vantage doesn't provide company name in this endpoint
@@ -36,7 +49,7 @@ export async function fetchStockData(symbol: string): Promise<StockData> {
     marketCap: parseFloat(overviewData.MarketCapitalization) || 0,
     peRatio: parseFloat(overviewData.PERatio) || 0,
     dividendYield: parseFloat(overviewData.DividendYield) || 0,
-    netIncome: [], // This would need to be fetched from a different endpoint
+    netIncome: netIncome,
     industry: overviewData.Industry || 'Unknown',
     high52Week: parseFloat(quote['52. week high']) || 0,
     low52Week: parseFloat(quote['52. week low']) || 0
