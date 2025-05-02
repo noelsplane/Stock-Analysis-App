@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",                          
     "lib": [
       "dom",
       "dom.iterable",
@@ -17,10 +17,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "src",                          
+    "paths": {
+      "*": ["*"]
+    },
+    "declaration": true  // Optional, if you need type declarations
   },
   "include": [
-    "src"
+    "src/**/*.ts",                             
+    "src/**/*.tsx"
   ]
 }

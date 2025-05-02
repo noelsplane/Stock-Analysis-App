@@ -1,3 +1,16 @@
+import { GrowthMetrics } from './financial';
+
+export interface Stock {
+  ticker: string;
+  name: string;
+  industry: string;
+  sector: string;
+  price: number;
+  marketCap: number;
+  volume: number;
+  lastUpdated: string;
+}
+
 export interface StockData {
   symbol: string;
   price: number;
@@ -42,4 +55,4 @@ export interface FavoritesContextType {
   isFavorite: (symbol: string) => boolean;
   loading: boolean;
   error: string | null;
-} 
+}

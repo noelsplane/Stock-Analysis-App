@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StockQueryFormProps } from '../../types/stock';
+import { StockQueryFormProps } from '../../types/favorites';
 
 const StockQueryForm: React.FC<StockQueryFormProps> = ({ onSubmit, isLoading }) => {
   const [symbol, setSymbol] = useState('');
@@ -7,29 +7,22 @@ const StockQueryForm: React.FC<StockQueryFormProps> = ({ onSubmit, isLoading }) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (symbol.trim()) {
-      onSubmit(symbol.trim().toUpperCase());
+      onSubmit(symbol.trim());
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="stock-query-form">
-      <div className="form-group">
-        <input
-          type="text"
-          value={symbol}
-          onChange={(e) => setSymbol(e.target.value)}
-          placeholder="Enter stock symbol (e.g., AAPL)"
-          className="form-control"
-          disabled={isLoading}
-        />
-        <button 
-          type="submit" 
-          className="btn btn-primary"
-          disabled={isLoading || !symbol.trim()}
-        >
-          {isLoading ? 'Loading...' : 'Get Stock Data'}
-        </button>
-      </div>
+      <input
+        type="text"
+        value={symbol}
+        onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+        placeholder="Enter stock symbol (e.g., AAPL)"
+        disabled={isLoading}
+      />
+      <button type="submit" disabled={isLoading || !symbol.trim()}>
+        {isLoading ? 'Loading...' : 'Search'}
+      </button>
     </form>
   );
 };
