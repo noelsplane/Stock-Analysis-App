@@ -1,3 +1,4 @@
+
 interface Stock {
   ticker: string;
   name: string;
@@ -41,3 +42,4 @@ class FavoritesService {
 }
 
 export default FavoritesService;
+
