@@ -1,13 +1,17 @@
 import { StockData } from '../types/stock';
 
-const API_KEY = 'C5ZSRLGRQ3YEXBZ2';
+const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 const BASE_URL = 'https://www.alphavantage.co/query';
 
-export const fetchStockData = async (symbol: string): Promise<StockData> => {
+export async function fetchStockData(symbol: string): Promise<StockData> {
+  if (!API_KEY) {
+    throw new Error('Alpha Vantage API key not found');
+  }
+
   const response = await fetch(
     `${BASE_URL}?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`
   );
-  
+
   if (!response.ok) {
     throw new Error('Failed to fetch stock data');
   }
@@ -15,22 +19,26 @@ export const fetchStockData = async (symbol: string): Promise<StockData> => {
   const data = await response.json();
   const quote = data['Global Quote'];
 
-  if (!quote || !quote['01. symbol']) {
-    throw new Error('Invalid stock symbol');
+  if (!quote) {
+    throw new Error('Invalid stock symbol or no data available');
   }
+
+  // Fetch additional data for P/E ratio and dividend yield
+  const overviewResponse = await fetch(
+    `${BASE_URL}?function=OVERVIEW&symbol=${symbol}&apikey=${API_KEY}`
+  );
+  const overviewData = await overviewResponse.json();
 
   return {
     symbol: quote['01. symbol'],
     name: quote['01. symbol'], // Alpha Vantage doesn't provide company name in this endpoint
-    industry: '', // Alpha Vantage doesn't provide this in this endpoint
-    sector: '', // Alpha Vantage doesn't provide this in this endpoint
     price: parseFloat(quote['05. price']),
-    marketCap: 0, // Alpha Vantage doesn't provide this in this endpoint
-    volume: parseInt(quote['06. volume']),
-    lastUpdated: new Date().toISOString(),
-    high52Week: 0, // Alpha Vantage doesn't provide this in this endpoint
-    low52Week: 0, // Alpha Vantage doesn't provide this in this endpoint
-    netIncome: [], // Alpha Vantage doesn't provide this in this endpoint
-    growthMetrics: undefined // Alpha Vantage doesn't provide this in this endpoint
+    marketCap: parseFloat(overviewData.MarketCapitalization) || 0,
+    peRatio: parseFloat(overviewData.PERatio) || 0,
+    dividendYield: parseFloat(overviewData.DividendYield) || 0,
+    netIncome: [], // This would need to be fetched from a different endpoint
+    industry: overviewData.Industry || 'Unknown',
+    high52Week: parseFloat(quote['52. week high']) || 0,
+    low52Week: parseFloat(quote['52. week low']) || 0
   };
-}; 
+} 

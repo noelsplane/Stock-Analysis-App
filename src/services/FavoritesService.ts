@@ -22,8 +22,8 @@ export class FavoritesService {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFavorites));
   }
 
-  static isFavorite(symbol: string): boolean {
-    const favorites = FavoritesService.getFavorites();
-    return favorites.some(f => f.symbol === symbol);
+  static async isFavorite(symbol: string): Promise<boolean> {
+    const favorites = await this.getFavorites();
+    return favorites.some(fav => fav.symbol === symbol);
   }
 } 
