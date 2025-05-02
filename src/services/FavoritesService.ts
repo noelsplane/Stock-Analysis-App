@@ -39,7 +39,7 @@ class FavoritesService {
     const favorites = this.getFavorites();
     return favorites.some(f => f.ticker === ticker);
   }
-};
+}
 
 export default FavoritesService;
 
