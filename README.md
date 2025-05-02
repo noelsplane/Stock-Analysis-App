@@ -74,10 +74,10 @@ src/
 
 This project is part of a team effort. Each member has specific responsibilities:
 
-- Member 1: Front-End Stock Query & Metrics Display
-- Member 2: Metrics Calculation and Business Logic
-- Member 3: Favorites and Database
-- Member 4: Favorites Filtering & Bonus Features
+- Jayden Brown: Front-End Stock Query & Metrics Display
+- Daylon Trotman: Metrics Calculation and Business Logic
+- Unique McElwain: Favorites and Database
+- Joshua Ward: Favorites Filtering & Bonus Features
 
 ## License
 
