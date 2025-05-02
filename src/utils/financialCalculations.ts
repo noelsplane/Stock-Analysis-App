@@ -1,5 +1,4 @@
-// src/utils/financialCalculations.tsx
-import React from 'react';
+// src/utils/financialCalculations.ts
 
 // Function for calculating growth rate
 export const calculateGrowthRate = (data: any[]) => {
@@ -28,11 +27,17 @@ export const calculateGrowthToPeRatio = (growthRate: number, peRatio: number) =>
   return growthRate / peRatio;
 };
 
-// Loading component to display loading message
-export const LoadingComponent: React.FC = () => {
-  return <div className="loading">Loading stock data...</div>;
+// Function to calculate growth metrics (combined)
+export const calculateGrowthMetrics = (data: any[], price: number) => {
+  const growthRate = calculateGrowthRate(data);
+  const earningsPerShare = data[data.length - 1].netIncome / price;
+  const peRatio = calculatePeRatio(price, earningsPerShare);
+  const growthToPeRatio = calculateGrowthToPeRatio(growthRate, peRatio);
+
+  return {
+    growthRate,
+    peRatio,
+    growthToPeRatio,
+    isGrowthHigherThanPe: growthRate > peRatio,
+  };
 };
-
-// Export everything together
-export { LoadingComponent };
-
