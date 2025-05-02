@@ -1,60 +1,52 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { StockData } from '../types/stock';
 import { FavoritesService } from '../services/FavoritesService';
 
 interface FavoritesContextType {
   favorites: StockData[];
-  addFavorite: (stock: StockData) => void;
-  removeFavorite: (symbol: string) => void;
-  isFavorite: (symbol: string) => boolean;
+  addFavorite: (stock: StockData) => Promise<void>;
+  removeFavorite: (symbol: string) => Promise<void>;
+  isFavorite: (symbol: string) => Promise<boolean>;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
-export const useFavorites = () => {
-  const context = useContext(FavoritesContext);
-  if (!context) {
-    throw new Error('useFavorites must be used within a FavoritesProvider');
-  }
-  return context;
-};
-
-export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [favorites, setFavorites] = useState<StockData[]>([]);
-  const favoritesService = new FavoritesService();
 
   useEffect(() => {
     const loadFavorites = async () => {
-      const loadedFavorites = await favoritesService.getFavorites();
+      const loadedFavorites = await FavoritesService.getFavorites();
       setFavorites(loadedFavorites);
     };
     loadFavorites();
   }, []);
 
   const addFavorite = async (stock: StockData) => {
-    await favoritesService.addFavorite(stock);
-    setFavorites(await favoritesService.getFavorites());
+    await FavoritesService.addFavorite(stock);
+    setFavorites(await FavoritesService.getFavorites());
   };
 
   const removeFavorite = async (symbol: string) => {
-    await favoritesService.removeFavorite(symbol);
-    setFavorites(await favoritesService.getFavorites());
+    await FavoritesService.removeFavorite(symbol);
+    setFavorites(await FavoritesService.getFavorites());
   };
 
   const isFavorite = (symbol: string) => {
-    return favorites.some(stock => stock.symbol === symbol);
-  };
-
-  const value = {
-    favorites,
-    addFavorite,
-    removeFavorite,
-    isFavorite
+    return FavoritesService.isFavorite(symbol);
   };
 
   return (
-    <FavoritesContext.Provider value={value}>
+    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite, isFavorite }}>
       {children}
     </FavoritesContext.Provider>
   );
+};
+
+export const useFavorites = () => {
+  const context = useContext(FavoritesContext);
+  if (context === undefined) {
+    throw new Error('useFavorites must be used within a FavoritesProvider');
+  }
+  return context;
 }; 

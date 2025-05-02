@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFavorites } from '../../context/FavoritesContext';
 import { StockData } from '../../types/stock';
 
@@ -8,13 +8,23 @@ interface FavoriteButtonProps {
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ stock }) => {
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
-  const isFavorited = isFavorite(stock.symbol);
+  const [isFavorited, setIsFavorited] = useState(false);
 
-  const handleClick = () => {
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      const status = await isFavorite(stock.symbol);
+      setIsFavorited(status);
+    };
+    checkFavoriteStatus();
+  }, [isFavorite, stock.symbol]);
+
+  const handleClick = async () => {
     if (isFavorited) {
-      removeFavorite(stock.symbol);
+      await removeFavorite(stock.symbol);
+      setIsFavorited(false);
     } else {
-      addFavorite(stock);
+      await addFavorite(stock);
+      setIsFavorited(true);
     }
   };
 

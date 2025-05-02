@@ -388,3 +388,40 @@ body {
 .favorite-button.favorited {
   color: #ffd700;
 }
+
+.error-message {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid #fecaca;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.loading-spinner::after {
+  content: '';
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #e5e7eb;
+  border-top-color: #4b5563;
+  border-radius: 50%;
+  margin-left: 0.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

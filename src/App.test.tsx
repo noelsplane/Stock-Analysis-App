@@ -20,7 +20,8 @@ function App() {
       const data = await fetchStockData(symbol);
       setStockData(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch stock data');
+      setError('Failed to fetch stock data');
+      console.error('Error fetching stock data:', err);
     } finally {
       setIsLoading(false);
     }
@@ -29,21 +30,26 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <nav className="navbar">
-          <div className="nav-links">
-            <button onClick={() => setShowFavorites(false)}>Home</button>
-            <button onClick={() => setShowFavorites(true)}>Favorites</button>
-          </div>
-        </nav>
-
-        <main className="main-content">
+        <header className="App-header">
+          <h1>Stock Analysis App</h1>
+          <nav>
+            <button
+              onClick={() => setShowFavorites(!showFavorites)}
+              className={showFavorites ? 'active' : ''}
+            >
+              {showFavorites ? 'Search Stocks' : 'View Favorites'}
+            </button>
+          </nav>
+        </header>
+        <main className="App-main">
           {showFavorites ? (
             <FavoritesPage />
           ) : (
             <>
               <StockQueryForm onSubmit={handleStockQuery} isLoading={isLoading} />
               {error && <div className="error">{error}</div>}
-              {stockData && <StockMetrics data={stockData} isLoading={isLoading} error={error} />}
+              {isLoading && <div className="loading">Loading...</div>}
+              {stockData && <StockMetrics stockData={stockData} />}
             </>
           )}
         </main>

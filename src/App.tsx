@@ -6,6 +6,7 @@ import StockMetrics from './components/StockQuery/StockMetrics';
 import FavoritesPage from './components/FavoritesPage';
 import { fetchStockData } from './services/alphaVantage';
 import { StockData } from './types/stock';
+import { FavoritesProvider } from './context/FavoritesContext';
 
 function App() {
   const [stockData, setStockData] = useState<StockData | null>(null);
@@ -14,13 +15,22 @@ function App() {
   const [showFavorites, setShowFavorites] = useState(false);
 
   const handleStockQuery = async (symbol: string) => {
+    if (!symbol.trim()) {
+      setError('Please enter a valid stock symbol');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
       const data = await fetchStockData(symbol);
+      if (!data) {
+        throw new Error('No data received from the API');
+      }
       setStockData(data);
     } catch (err) {
-      setError('Failed to fetch stock data');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch stock data';
+      setError(errorMessage);
       console.error('Error fetching stock data:', err);
     } finally {
       setIsLoading(false);
@@ -29,31 +39,33 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <header className="App-header">
-          <h1>Stock Analysis App</h1>
-          <nav>
-            <button
-              onClick={() => setShowFavorites(!showFavorites)}
-              className={showFavorites ? 'active' : ''}
-            >
-              {showFavorites ? 'Search Stocks' : 'View Favorites'}
-            </button>
-          </nav>
-        </header>
-        <main className="App-main">
-          {showFavorites ? (
-            <FavoritesPage />
-          ) : (
-            <>
-              <StockQueryForm onSubmit={handleStockQuery} isLoading={isLoading} />
-              {error && <div className="error">{error}</div>}
-              {isLoading && <div className="loading">Loading...</div>}
-              {stockData && <StockMetrics stockData={stockData} />}
-            </>
-          )}
-        </main>
-      </div>
+      <FavoritesProvider>
+        <div className="App">
+          <header className="App-header">
+            <h1>Stock Analysis App</h1>
+            <nav>
+              <button
+                onClick={() => setShowFavorites(!showFavorites)}
+                className={showFavorites ? 'active' : ''}
+              >
+                {showFavorites ? 'Search Stocks' : 'View Favorites'}
+              </button>
+            </nav>
+          </header>
+          <main className="App-main">
+            {showFavorites ? (
+              <FavoritesPage />
+            ) : (
+              <>
+                <StockQueryForm onSubmit={handleStockQuery} isLoading={isLoading} />
+                {error && <div className="error-message">{error}</div>}
+                {isLoading && <div className="loading-spinner">Loading...</div>}
+                {stockData && <StockMetrics stockData={stockData} />}
+              </>
+            )}
+          </main>
+        </div>
+      </FavoritesProvider>
     </Router>
   );
 }
