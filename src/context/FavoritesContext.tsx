@@ -11,6 +11,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     // Load favorites from localStorage on initial mount
     const loadFavorites = () => {
+      setLoading(true);
       try {
         const storedFavorites = localStorage.getItem('favoriteStocks');
         if (storedFavorites) {
@@ -19,6 +20,8 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       } catch (err) {
         setError('Failed to load favorites');
         console.error('Error loading favorites:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -26,6 +29,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   const addFavorite = (stock: FavoriteStock) => {
+    setLoading(true);
     try {
       const updatedFavorites = [...favorites, stock];
       setFavorites(updatedFavorites);
@@ -33,10 +37,13 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } catch (err) {
       setError('Failed to add favorite');
       console.error('Error adding favorite:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const removeFavorite = (symbol: string) => {
+    setLoading(true);
     try {
       const updatedFavorites = favorites.filter(fav => fav.symbol !== symbol);
       setFavorites(updatedFavorites);
@@ -44,6 +51,8 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } catch (err) {
       setError('Failed to remove favorite');
       console.error('Error removing favorite:', err);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { FavoritesService } from '../services/FavoritesService';
-import { Stock } from '../types/favorites';
+import { FavoriteStock } from '../types/stock';
 import './FavoritesPage.css';
 
-const FavoritesPage: React.FC<{}> = () => {
-  const [favorites, setFavorites] = useState<Stock[]>([]);
+const FavoritesPage: React.FC = () => {
+  const [favorites, setFavorites] = useState<FavoriteStock[]>([]);
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
 
   useEffect(() => {
@@ -16,8 +16,8 @@ const FavoritesPage: React.FC<{}> = () => {
     setFavorites(savedFavorites);
   };
 
-  const removeFavorite = (ticker: string): void => {
-    FavoritesService.removeFavorite(ticker);
+  const removeFavorite = (symbol: string): void => {
+    FavoritesService.removeFavorite(symbol);
     loadFavorites();
   };
 
@@ -27,7 +27,7 @@ const FavoritesPage: React.FC<{}> = () => {
   // Filter favorites by selected industry
   const filteredFavorites = selectedIndustry === 'all' 
     ? favorites 
-    : favorites.filter((stock: Stock) => stock.industry === selectedIndustry);
+    : favorites.filter((stock: FavoriteStock) => stock.industry === selectedIndustry);
 
   return (
     <div className="favorites-page">
@@ -55,38 +55,32 @@ const FavoritesPage: React.FC<{}> = () => {
       ) : (
         <div className="favorites-grid">
           {filteredFavorites.map((stock) => (
-            <div key={stock.ticker} className="favorite-card">
+            <div key={stock.symbol} className="favorite-card">
               <div className="card-header">
-                <h3>{stock.ticker}</h3>
+                <h3>{stock.symbol}</h3>
                 <button 
                   className="remove-btn"
-                  onClick={() => removeFavorite(stock.ticker)}
+                  onClick={() => removeFavorite(stock.symbol)}
                 >
                   ×
                 </button>
               </div>
               <div className="card-content">
-                <p className="stock-name">{stock.name}</p>
+                <p className="stock-name">{stock.companyName}</p>
                 <div className="stock-info">
                   <div className="info-row">
                     <span className="label">Industry:</span>
                     <span className="value">{stock.industry}</span>
                   </div>
-                  <div className="info-row">
-                    <span className="label">Sector:</span>
-                    <span className="value">{stock.sector}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Price:</span>
-                    <span className="value">${stock.price.toLocaleString()}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Market Cap:</span>
-                    <span className="value">${stock.marketCap.toLocaleString()}</span>
-                  </div>
+                  {stock.lastPrice && (
+                    <div className="info-row">
+                      <span className="label">Price:</span>
+                      <span className="value">${stock.lastPrice.toLocaleString()}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="last-updated">
-                  Last updated: {new Date(stock.lastUpdated).toLocaleString()}
+                  Added: {new Date(stock.addedAt).toLocaleString()}
                 </div>
               </div>
             </div>

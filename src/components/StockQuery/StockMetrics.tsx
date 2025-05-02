@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { calculateGrowthMetrics } from '../../utils/financialCalculations';
 import { FavoritesService } from '../../services/FavoritesService';
-import { StockData, StockMetricsProps, FavoriteStock } from '../../types/stock';
-import { GrowthMetrics } from '../../types/financial';
+import { StockMetricsProps, FavoriteStock } from '../../types/stock';
+import { GrowthMetrics, FinancialData } from '../../types/financial';
 
 const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -51,7 +51,13 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ data, isLoading, error }) =
 
   if (!growthMetrics && data.netIncome.length >= 2) {
     try {
-      growthMetrics = calculateGrowthMetrics(data.netIncome);
+      const financialData: FinancialData[] = data.netIncome.map(item => ({
+        netIncome: item.value,
+        price: data.price,
+        earningsPerShare: item.value / 1000000, // Assuming 1M shares outstanding
+        year: item.year
+      }));
+      growthMetrics = calculateGrowthMetrics(financialData, data.price);
     } catch (err) {
       errorMessage = 'Unable to calculate growth metrics';
       console.error('Error calculating growth metrics:', err);
