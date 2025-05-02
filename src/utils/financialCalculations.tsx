@@ -1,41 +1,38 @@
 // src/utils/financialCalculations.tsx
-import React, { FC } from 'react';
-import { StockMetricsProps } from '../../types/stock'; // Ensure the path is correct
+// src/utils/financialCalculations.tsx
+import React from 'react';
 
-const StockMetrics: FC<StockMetricsProps> = ({ data, isLoading, error }) => {
-  if (isLoading) {
-    return <div className="loading">Loading stock data...</div>;
+// Function for calculating growth rate
+export const calculateGrowthRate = (data: any[]) => {
+  if (data.length < 2) {
+    throw new Error('Insufficient data to calculate growth rate.');
   }
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
-
-  if (!data) {
-    return null;
-  }
-
-  return (
-    <div className="stock-metrics">
-      <h2>{data.symbol} Stock Metrics</h2>
-      <div className="metrics-grid">
-        <div className="metric-card">
-          <h3>Current Price</h3>
-          <p>${data.price.toFixed(2)}</p>
-        </div>
-        <div className="metric-card">
-          <h3>52-Week High</h3>
-          <p>${data.high52Week.toFixed(2)}</p>
-        </div>
-        <div className="metric-card">
-          <h3>52-Week Low</h3>
-          <p>${data.low52Week.toFixed(2)}</p>
-        </div>
-        {/* Add additional metrics as needed */}
-      </div>
-    </div>
-  );
+  const start = data[0].netIncome;
+  const end = data[data.length - 1].netIncome;
+  const years = data.length - 1;
+  return ((end - start) / start) * 100 / years;
 };
 
-export default StockMetrics;
+// Function to calculate P/E ratio
+export const calculatePeRatio = (price: number, earningsPerShare: number) => {
+  if (earningsPerShare <= 0) {
+    throw new Error('Earnings per share must be greater than zero.');
+  }
+  return price / earningsPerShare;
+};
 
+// Function to calculate growth-to-P/E ratio
+export const calculateGrowthToPeRatio = (growthRate: number, peRatio: number) => {
+  if (peRatio === 0) {
+    throw new Error('P/E ratio cannot be zero.');
+  }
+  return growthRate / peRatio;
+};
+
+// Loading component to display loading message
+export const LoadingComponent: React.FC = () => {
+  return <div className="loading">Loading stock data...</div>;
+};
+
+// Export everything together
+export { LoadingComponent };
