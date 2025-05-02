@@ -1,45 +1,29 @@
+import { Stock } from '../types/stock';
 
-interface Stock {
-  ticker: string;
-  name: string;
-  industry: string;
-  // Add other properties as needed
-}
+const FAVORITES_KEY = 'favorites';
 
-class FavoritesService {
-  // Get the list of favorite stocks from localStorage
-  static getFavorites(): Stock[] {
-    try {
-      const favorites = localStorage.getItem('favorites');
-      return favorites ? JSON.parse(favorites) : [];
-    } catch (e) {
-      console.error("Failed to parse favorites from localStorage", e);
-      return [];
-    }
-  }
+export const FavoritesService = {
+  getFavorites: (): Stock[] => {
+    const favorites = localStorage.getItem(FAVORITES_KEY);
+    return favorites ? JSON.parse(favorites) : [];
+  },
 
-  // Add a stock to the favorites list in localStorage
-  static addFavorite(stock: Stock) {
-    const favorites = this.getFavorites();
-    if (!favorites.find(f => f.ticker === stock.ticker)) {
+  addFavorite: (stock: Stock): void => {
+    const favorites = FavoritesService.getFavorites();
+    if (!favorites.some(f => f.ticker === stock.ticker)) {
       favorites.push(stock);
-      localStorage.setItem('favorites', JSON.stringify(favorites));
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
     }
-  }
+  },
 
-  // Remove a stock from the favorites list in localStorage by ticker
-  static removeFavorite(ticker: string) {
-    let favorites = this.getFavorites();
-    favorites = favorites.filter(f => f.ticker !== ticker);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }
+  removeFavorite: (ticker: string): void => {
+    const favorites = FavoritesService.getFavorites();
+    const updatedFavorites = favorites.filter(f => f.ticker !== ticker);
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
+  },
 
-  // Check if a stock is in the favorites list
-  static isFavorite(ticker: string): boolean {
-    const favorites = this.getFavorites();
+  isFavorite: (ticker: string): boolean => {
+    const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.ticker === ticker);
   }
-}
-
-export default FavoritesService;
-
+}; 
