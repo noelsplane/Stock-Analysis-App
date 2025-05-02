@@ -1,4 +1,4 @@
-import { GrowthMetrics } from './financialTypes';
+import { GrowthMetrics } from './financial';
 
 export interface Stock {
   ticker: string;
