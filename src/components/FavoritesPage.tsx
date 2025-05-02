@@ -1,5 +1,5 @@
-// src/components/FavoritesPage.tsx
 import React, { useState, useEffect } from 'react';
+import './FavoritesPage.css'; // Import the CSS styles
 
 const FavoritesPage: React.FC = () => {
   const [favorites, setFavorites] = useState<any[]>([]);
@@ -19,27 +19,36 @@ const FavoritesPage: React.FC = () => {
     : favorites.filter(stock => stock.industry === selectedIndustry);
 
   return (
-    <div>
+    <div className="favorites-container">
       <h1>Your Favorite Stocks</h1>
-      <select onChange={(e) => setSelectedIndustry(e.target.value)} value={selectedIndustry}>
-        <option value="all">All Industries</option>
-        {industries.map((industry, index) => (
-          <option key={index} value={industry}>{industry}</option>
-        ))}
-      </select>
-      <div>
+      <div className="industry-filter">
+        <select onChange={(e) => setSelectedIndustry(e.target.value)} value={selectedIndustry}>
+          <option value="all">All Industries</option>
+          {industries.map((industry, index) => (
+            <option key={index} value={industry}>{industry}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="favorites-grid">
         {filteredFavorites.map((stock, index) => (
-          <div key={index}>
-            <h2>{stock.name}</h2>
+          <div key={index} className="favorite-card">
+            <h3>{stock.name}</h3>
             <p>{stock.ticker}</p>
             <p>{stock.industry}</p>
-            {/* You can add more stock details here */}
+            <button className="remove-button" onClick={() => handleRemove(stock.ticker)}>Remove</button>
           </div>
         ))}
       </div>
     </div>
   );
+
+  // Function to remove a stock from favorites
+  const handleRemove = (ticker: string) => {
+    const updatedFavorites = favorites.filter(stock => stock.ticker !== ticker);
+    setFavorites(updatedFavorites);
+    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+  };
 };
 
 export default FavoritesPage;
-
