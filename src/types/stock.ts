@@ -11,20 +11,21 @@ export interface Stock {
   lastUpdated: string;
 }
 
-export interface StockData extends Stock {
+export interface StockData {
+  symbol: string;
+  name: string;
+  price: number;
+  marketCap: number;
+  peRatio: number;
+  dividendYield: number;
+  netIncome: number[];
+  industry?: string;
   high52Week: number;
   low52Week: number;
-  netIncome: Array<{
-    year: number;
-    value: number;
-  }>;
-  growthMetrics?: GrowthMetrics;
 }
 
 export interface StockMetricsProps {
-  data: StockData | null;
-  isLoading: boolean;
-  error: string | null;
+  stockData: StockData;
 }
 
 export interface StockQueryFormProps {

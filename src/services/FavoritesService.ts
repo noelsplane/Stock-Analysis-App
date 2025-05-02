@@ -1,29 +1,29 @@
-import { FavoriteStock } from '../types/stock';
+import { StockData } from '../types/stock';
 
-const FAVORITES_KEY = 'favorites';
+const STORAGE_KEY = 'favoriteStocks';
 
-export const FavoritesService = {
-  getFavorites: (): FavoriteStock[] => {
-    const favorites = localStorage.getItem(FAVORITES_KEY);
-    return favorites ? JSON.parse(favorites) : [];
-  },
+export class FavoritesService {
+  static async getFavorites(): Promise<StockData[]> {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  }
 
-  addFavorite: (stock: FavoriteStock): void => {
-    const favorites = FavoritesService.getFavorites();
-    if (!favorites.some(f => f.symbol === stock.symbol)) {
+  static async addFavorite(stock: StockData): Promise<void> {
+    const favorites = await this.getFavorites();
+    if (!favorites.some(fav => fav.symbol === stock.symbol)) {
       favorites.push(stock);
-      localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
     }
-  },
+  }
 
-  removeFavorite: (symbol: string): void => {
-    const favorites = FavoritesService.getFavorites();
-    const updatedFavorites = favorites.filter(f => f.symbol !== symbol);
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavorites));
-  },
+  static async removeFavorite(symbol: string): Promise<void> {
+    const favorites = await this.getFavorites();
+    const updatedFavorites = favorites.filter(stock => stock.symbol !== symbol);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFavorites));
+  }
 
-  isFavorite: (symbol: string): boolean => {
+  static isFavorite(symbol: string): boolean {
     const favorites = FavoritesService.getFavorites();
     return favorites.some(f => f.symbol === symbol);
   }
-}; 
+} 
