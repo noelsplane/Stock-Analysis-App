@@ -4,11 +4,12 @@ import StockQueryForm from './components/StockQuery/StockQueryForm';
 import StockMetrics from './components/StockQuery/StockMetrics';
 import FavoritesPage from './components/FavoritesPage';
 import { fetchStockData } from './services/alphaVantage';
+import { StockData } from './types/favorites';
 
 function App() {
-  const [stockData, setStockData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [stockData, setStockData] = useState<StockData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [showFavorites, setShowFavorites] = useState(false);
 
   const handleStockQuery = async (symbol) => {
@@ -28,29 +29,19 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Stock Analyzer</h1>
-        <nav>
-          <button 
-            onClick={() => setShowFavorites(false)}
-            className={!showFavorites ? 'active' : ''}
-          >
-            Search Stocks
-          </button>
-          <button 
-            onClick={() => setShowFavorites(true)}
-            className={showFavorites ? 'active' : ''}
-          >
-            Favorites
-          </button>
-        </nav>
+        <h1>Stock Analysis App</h1>
+        <button onClick={() => setShowFavorites(!showFavorites)}>
+          {showFavorites ? 'Back to Search' : 'View Favorites'}
+        </button>
       </header>
-      <main className="App-main">
+      <main>
         {showFavorites ? (
           <FavoritesPage />
         ) : (
           <>
             <StockQueryForm onSubmit={handleStockQuery} isLoading={isLoading} />
-            <StockMetrics data={stockData} isLoading={isLoading} error={error} />
+            {error && <div className="error">{error}</div>}
+            {stockData && <StockMetrics data={stockData} />}
           </>
         )}
       </main>
@@ -58,4 +49,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 
