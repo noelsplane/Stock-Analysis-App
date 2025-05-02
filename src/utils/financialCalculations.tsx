@@ -1,5 +1,4 @@
 // src/utils/financialCalculations.tsx
-// src/utils/financialCalculations.tsx
 import React from 'react';
 
 // Function for calculating growth rate
@@ -36,3 +35,4 @@ export const LoadingComponent: React.FC = () => {
 
 // Export everything together
 export { LoadingComponent };
+
