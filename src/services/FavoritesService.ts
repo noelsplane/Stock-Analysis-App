@@ -8,14 +8,22 @@ interface Stock {
 class FavoritesService {
   // Get the list of favorite stocks from localStorage
   static getFavorites(): Stock[] {
-    return JSON.parse(localStorage.getItem('favorites') || '[]');
+    try {
+      const favorites = localStorage.getItem('favorites');
+      return favorites ? JSON.parse(favorites) : [];
+    } catch (e) {
+      console.error("Failed to parse favorites from localStorage", e);
+      return [];
+    }
   }
 
   // Add a stock to the favorites list in localStorage
   static addFavorite(stock: Stock) {
     const favorites = this.getFavorites();
-    favorites.push(stock);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+    if (!favorites.find(f => f.ticker === stock.ticker)) {
+      favorites.push(stock);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
   }
 
   // Remove a stock from the favorites list in localStorage by ticker
@@ -33,4 +41,3 @@ class FavoritesService {
 }
 
 export default FavoritesService;
-
