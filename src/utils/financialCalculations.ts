@@ -1,7 +1,13 @@
 // src/utils/financialCalculations.ts
 
+// Define the type for the data parameter (assuming netIncome and year are present)
+interface FinancialData {
+  netIncome: number; // The net income for a given year
+  year: number; // The year of the data point
+}
+
 // Function for calculating growth rate
-export const calculateGrowthRate = (data: any[]) => {
+export const calculateGrowthRate = (data: FinancialData[]): number => {
   if (data.length < 2) {
     throw new Error('Insufficient data to calculate growth rate.');
   }
@@ -12,7 +18,7 @@ export const calculateGrowthRate = (data: any[]) => {
 };
 
 // Function to calculate P/E ratio
-export const calculatePeRatio = (price: number, earningsPerShare: number) => {
+export const calculatePeRatio = (price: number, earningsPerShare: number): number => {
   if (earningsPerShare <= 0) {
     throw new Error('Earnings per share must be greater than zero.');
   }
@@ -20,7 +26,7 @@ export const calculatePeRatio = (price: number, earningsPerShare: number) => {
 };
 
 // Function to calculate growth-to-P/E ratio
-export const calculateGrowthToPeRatio = (growthRate: number, peRatio: number) => {
+export const calculateGrowthToPeRatio = (growthRate: number, peRatio: number): number => {
   if (peRatio === 0) {
     throw new Error('P/E ratio cannot be zero.');
   }
@@ -28,7 +34,7 @@ export const calculateGrowthToPeRatio = (growthRate: number, peRatio: number) =>
 };
 
 // Function to calculate growth metrics (combined)
-export const calculateGrowthMetrics = (data: any[], price: number) => {
+export const calculateGrowthMetrics = (data: FinancialData[], price: number) => {
   const growthRate = calculateGrowthRate(data);
   const earningsPerShare = data[data.length - 1].netIncome / price;
   const peRatio = calculatePeRatio(price, earningsPerShare);
