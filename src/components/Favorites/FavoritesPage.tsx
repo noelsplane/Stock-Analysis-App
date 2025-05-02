@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
 import { useFavorites } from '../../context/FavoritesContext';
-import { FavoriteStock } from '../../types/stock';
+import { StockData } from '../../types/stock';
+import './FavoritesPage.css';
 
 const FavoritesPage: React.FC = () => {
   const { favorites, removeFavorite } = useFavorites();
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
 
-  // Get unique industries
-  const industries = ['all', ...new Set(favorites.map(fav => fav.industry))];
+  const industries = ['all', ...new Set(favorites.map(stock => stock.industry || 'Unknown'))];
 
-  // Filter favorites by selected industry
   const filteredFavorites = selectedIndustry === 'all'
     ? favorites
-    : favorites.filter(fav => fav.industry === selectedIndustry);
+    : favorites.filter(stock => stock.industry === selectedIndustry);
 
   return (
     <div className="favorites-page">
       <h1>Favorite Stocks</h1>
       
       <div className="industry-filter">
-        <label htmlFor="industry-select">Filter by Industry: </label>
+        <label htmlFor="industry-select">Filter by Industry:</label>
         <select
           id="industry-select"
           value={selectedIndustry}
           onChange={(e) => setSelectedIndustry(e.target.value)}
-          className="form-control"
         >
           {industries.map(industry => (
             <option key={industry} value={industry}>
@@ -36,29 +34,46 @@ const FavoritesPage: React.FC = () => {
 
       <div className="favorites-grid">
         {filteredFavorites.length === 0 ? (
-          <p>No favorite stocks found.</p>
+          <div className="no-favorites">
+            <p>No favorite stocks found.</p>
+            <p>Add stocks to your favorites to see them here.</p>
+          </div>
         ) : (
-          filteredFavorites.map((stock: FavoriteStock) => (
+          filteredFavorites.map((stock: StockData) => (
             <div key={stock.symbol} className="favorite-card">
-              <h3>{stock.symbol}</h3>
-              <p className="company-name">{stock.companyName}</p>
-              <p className="industry">Industry: {stock.industry}</p>
-              {stock.lastPrice && (
-                <p className="price">
-                  Price: ${stock.lastPrice.toFixed(2)}
-                  {stock.change && (
-                    <span className={stock.change >= 0 ? 'positive' : 'negative'}>
-                      ({stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}%)
+              <div className="card-header">
+                <h3>{stock.symbol}</h3>
+                <button
+                  onClick={() => removeFavorite(stock.symbol)}
+                  className="remove-btn"
+                  aria-label="Remove from favorites"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="card-content">
+                <p className="stock-name">{stock.name}</p>
+                <div className="stock-info">
+                  <div className="info-row">
+                    <span className="label">Price</span>
+                    <span className="value">${stock.price.toFixed(2)}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Market Cap</span>
+                    <span className="value">${(stock.marketCap / 1e9).toFixed(2)}B</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">P/E Ratio</span>
+                    <span className="value">{stock.peRatio.toFixed(2)}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Dividend Yield</span>
+                    <span className={`value ${stock.dividendYield > 0 ? 'positive' : 'negative'}`}>
+                      {stock.dividendYield.toFixed(2)}%
                     </span>
-                  )}
-                </p>
-              )}
-              <button
-                onClick={() => removeFavorite(stock.symbol)}
-                className="btn btn-danger"
-              >
-                Remove
-              </button>
+                  </div>
+                </div>
+              </div>
             </div>
           ))
         )}
