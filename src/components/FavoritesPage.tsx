@@ -1,46 +1,39 @@
-import React, { useState } from 'react';
-import { Stock } from '../types/stock';
-import { FavoritesService } from '../services/FavoritesService';
-import './FavoritesPage.css';
+// src/components/FavoritesPage.tsx
+import React, { useState, useEffect } from 'react';
 
 const FavoritesPage: React.FC = () => {
-  const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
-  const favorites = FavoritesService.getFavorites();
+  const [favorites, setFavorites] = useState<any[]>([]);
+  const [selectedIndustry, setSelectedIndustry] = useState('all');
+
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setFavorites(storedFavorites);
+  }, []);
 
   // Get unique industries from favorites
-  const industries = Array.from(new Set(favorites.map(stock => stock.industry)));
-  
+  const industries = [...new Set(favorites.map(stock => stock.industry))];
+
   // Filter favorites by selected industry
-  const filteredFavorites = selectedIndustry === 'all' 
-    ? favorites 
+  const filteredFavorites = selectedIndustry === 'all'
+    ? favorites
     : favorites.filter(stock => stock.industry === selectedIndustry);
 
   return (
-    <div className="favorites-container">
-      <div className="industry-filter">
-        <select 
-          value={selectedIndustry} 
-          onChange={(e) => setSelectedIndustry(e.target.value)}
-        >
-          <option value="all">All Industries</option>
-          {industries.map(industry => (
-            <option key={industry} value={industry}>{industry}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="favorites-grid">
-        {filteredFavorites.map(stock => (
-          <div key={stock.ticker} className="favorite-card">
-            <h3>{stock.ticker}</h3>
-            <p>Industry: {stock.industry}</p>
-            <p>Price: ${stock.price.toFixed(2)}</p>
-            <button 
-              className="remove-button"
-              onClick={() => FavoritesService.removeFavorite(stock.ticker)}
-            >
-              Remove
-            </button>
+    <div>
+      <h1>Your Favorite Stocks</h1>
+      <select onChange={(e) => setSelectedIndustry(e.target.value)} value={selectedIndustry}>
+        <option value="all">All Industries</option>
+        {industries.map((industry, index) => (
+          <option key={index} value={industry}>{industry}</option>
+        ))}
+      </select>
+      <div>
+        {filteredFavorites.map((stock, index) => (
+          <div key={index}>
+            <h2>{stock.name}</h2>
+            <p>{stock.ticker}</p>
+            <p>{stock.industry}</p>
+            {/* You can add more stock details here */}
           </div>
         ))}
       </div>
@@ -49,3 +42,4 @@ const FavoritesPage: React.FC = () => {
 };
 
 export default FavoritesPage;
+
